@@ -9,19 +9,24 @@
 # 7. Go to https://wbdstaging.pagerduty.com/service-directory/{{SERVICE_ID}}/activity
 # 8. You'll see changes in the recent changes section
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_call:
+    inputs:
+      key:
+        description: 'Github Integration Key of the Service'
+        required: true        
+        type: string
+  
 
 jobs:
   send-pagerduty-change-event:
     runs-on: ubuntu-latest
     name: Sending PagerDuty Change Event
     steps:
+      - name: Print int key
+        run: |
+          echo "int key-----"
+          echo "${{ github.event.inputs.key }}" 
       - name: Create a change event
         uses: PagerDuty/pagerduty-change-events-action@master
         with:
-          integration-key: ${{ secrets.PAGERDUTY_CHANGE_INTEGRATION_KEY }}
+          integration-key: ${{ github.event.inputs.key }}
